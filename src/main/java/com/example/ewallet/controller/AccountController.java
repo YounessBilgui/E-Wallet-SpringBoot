@@ -1,6 +1,8 @@
 package com.example.ewallet.controller;
 
 
+import com.example.ewallet.dto.RequestAccount;
+import com.example.ewallet.dto.ResponseAccount;
 import com.example.ewallet.entities.Account;
 import com.example.ewallet.services.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +33,8 @@ public class AccountController {
         return ResponseEntity.ok(user);
     }
     @PostMapping
-    public ResponseEntity<Account> createUser(@RequestBody Account account){
-        Account createdAccount = accountService.createUser(account);
+    public ResponseEntity<ResponseAccount> createUser(@RequestBody RequestAccount requestAccount){
+        ResponseAccount createdAccount = accountService.createUser(requestAccount);
         return ResponseEntity.ok(createdAccount);
     }
 

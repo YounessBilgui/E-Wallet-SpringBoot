@@ -1,6 +1,8 @@
 package com.example.ewallet.services;
 
 
+import com.example.ewallet.dto.RequestAccount;
+import com.example.ewallet.dto.ResponseAccount;
 import com.example.ewallet.entities.Account;
 import com.example.ewallet.repositories.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +31,20 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Account createUser(Account account){
-        return accountRepository.save(account);
+    public ResponseAccount createUser(RequestAccount requestAccount){
+
+        Account account = new Account();
+        account.setName(requestAccount.getName());
+        account.setEmail(requestAccount.getEmail());
+        account.setPhone(requestAccount.getPhone());
+        account.setPassword(requestAccount.getPassword());
+        Account createdAccount = accountRepository.save(account);
+        ResponseAccount responseAccount = new ResponseAccount();
+        responseAccount.setName(createdAccount.getName());
+        responseAccount.setEmail(createdAccount.getEmail());
+        responseAccount.setPhone(createdAccount.getPhone());
+        return responseAccount;
+
     }
 
     @Override
@@ -59,4 +73,5 @@ public class AccountServiceImpl implements AccountService {
         }
 
     }
+
 }
