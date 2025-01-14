@@ -1,21 +1,22 @@
 //package com.example.ewallet.entities;
 //
-//
 //import jakarta.persistence.*;
 //
 //import java.time.LocalDateTime;
 //
-
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import lombok.Builder;
-import lombok.Data;
-
+//
+//
+//import jakarta.persistence.Entity;
+//import jakarta.persistence.Table;
+//import lombok.AllArgsConstructor;
+//import lombok.Data;
+//import lombok.NoArgsConstructor;
+//
 //@Entity
-//Table(name = "transactions")
+//@Table(name = "transactions")
 //@Data
-//@Builder
+//@AllArgsConstructor
+//@NoArgsConstructor
 //public class Transaction {
 //    @Id
 //    @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,14 +44,6 @@ import lombok.Data;
 //
 //    // CONSTRUCTOR
 //
-//    public Transaction(Long id, Wallet wallet, Transaction type, Transaction status, String description, LocalDateTime createdAt) {
-//        this.id = id;
-//        this.wallet = wallet;
-//        this.type = type;
-//        this.status = status;
-//        this.description = description;
-//        this.createdAt = createdAt;
-//    }
 //    public enum TransactionType{
 //        CREDIT,
 //        DEBIT

@@ -34,18 +34,6 @@ public class Account {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
-//    public Account(Long id, String name, String email, String phone, String password, LocalDateTime createdAt) {
-//        this.id = id;
-//        this.name = name;
-//        this.email = email;
-//        this.phone = phone;
-//        this.password = password;
-//        this.createdAt = createdAt;
-//    }
-
-//    public Account() {
-//
-//    }
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
