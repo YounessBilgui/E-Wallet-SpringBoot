@@ -29,6 +29,14 @@ public class AccountServiceImpl implements AccountService {
     public Optional<Account> getUserById(Long id) {
         return accountRepository.findById(id);
     }
+    public Account findByEmail(String email) {
+        return accountRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Account with this email" + email + "not found"));
+    }
+    public Account findByPhone(String phone){
+        return accountRepository.findByPhone(phone)
+                .orElseThrow(()-> new IllegalArgumentException("Account with this number phone" + phone + "not found"));
+    }
 
     @Override
     public ResponseAccount createUser(RequestAccount requestAccount){

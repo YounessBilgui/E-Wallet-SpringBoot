@@ -32,6 +32,26 @@ public class AccountController {
         Optional<Account> user = accountService.getUserById(id);
         return ResponseEntity.ok(user);
     }
+    @GetMapping("/email/{email}")
+    public ResponseEntity<?> getAccountByEmail(@PathVariable String email){
+        try{
+            Account account = accountService.findByEmail(email);
+            return ResponseEntity.ok(account);
+        }
+        catch (IllegalArgumentException e){
+            return ResponseEntity.badRequest().body("Account With Email" + email + "Not Found");
+        }
+    }
+    @GetMapping("/phone/{phone}")
+    public ResponseEntity<?> getAccountByPhone(@PathVariable String phone){
+        try{
+            Account account = accountService.findByPhone(phone);
+            return ResponseEntity.ok(account);
+        }
+        catch (IllegalArgumentException e){
+            return ResponseEntity.badRequest().body("Account With Phone" + phone + "Not Found");
+        }
+    }
     @PostMapping
     public ResponseEntity<ResponseAccount> createUser(@RequestBody RequestAccount requestAccount){
         ResponseAccount createdAccount = accountService.createUser(requestAccount);
