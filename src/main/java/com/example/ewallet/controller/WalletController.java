@@ -32,8 +32,17 @@ public class WalletController {
         List<Wallet> wallets = walletService.getAllWallets();
         return ResponseEntity.ok(wallets);
     }
+    @GetMapping("/account/{accountId}")
+    public ResponseEntity<?> getWalletByAccountId(@PathVariable Long accountId){
+        try {
+            Wallet wallet = walletService.getWalletByAccountId(accountId);
+            return ResponseEntity.ok(wallet);
+        }catch (IllegalArgumentException | IllegalAccessException e){
+            return ResponseEntity.badRequest().body("Wallet not Found");
+        }
+    }
 
-    @PostMapping("user/{userId}")
+    @PostMapping("account/{userId}")
     public ResponseEntity<Wallet> createWallet(@PathVariable Long userId){
         Wallet wallet = walletService.createWallet(userId);
         return ResponseEntity.ok(wallet);
@@ -46,7 +55,6 @@ public class WalletController {
     }
 
     @DeleteMapping("/{walletId}")
-
     public ResponseEntity<String> deleteWallet(@PathVariable Long walletId){
         walletService.deleteWallet(walletId);
         return ResponseEntity.ok("Wallet deleted successfully!");

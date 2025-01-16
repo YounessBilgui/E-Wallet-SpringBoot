@@ -1,5 +1,6 @@
 package com.example.ewallet.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 import lombok.*;
@@ -29,6 +30,7 @@ public class Account {
     private String phone;
 
     @Column(nullable = false)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     @Column(name = "created_at", updatable = false)
@@ -82,4 +84,5 @@ public class Account {
     public void setPassword(String password) {
         this.password = password;
     }
+
 }

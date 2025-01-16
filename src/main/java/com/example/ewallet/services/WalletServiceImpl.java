@@ -28,10 +28,10 @@ public class WalletServiceImpl implements WalletService
         return walletRepository.findById(walletId);
 
    }
+   @Override
    public List<Wallet> getAllWallets(){
         return walletRepository.findAll();
    }
-
     @Override
     public Wallet createWallet(Long userId){
         Optional<Account> account = accountRepository.findById(userId);
@@ -65,6 +65,15 @@ public class WalletServiceImpl implements WalletService
         } else {
             throw new RuntimeException("Wallet not found with ID: " + walletId);
         }
+    }
+
+    @Override
+    public Wallet getWalletByAccountId(Long accoundId) throws IllegalAccessException {
+        Wallet wallet = walletRepository.findByAccountId(accoundId);
+        if (wallet == null){
+            throw new IllegalAccessException("Wallet not found for account ID" + accoundId);
+        }
+        return wallet;
     }
 
 

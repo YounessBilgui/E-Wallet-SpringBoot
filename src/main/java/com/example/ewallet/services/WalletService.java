@@ -11,5 +11,6 @@ public interface WalletService {
     List<Wallet> getAllWallets();
     Wallet updateBalance(Long walledId, Double amount);
     void deleteWallet(Long walletId);
+    Wallet getWalletByAccountId(Long userId) throws IllegalAccessException;
 
 }
