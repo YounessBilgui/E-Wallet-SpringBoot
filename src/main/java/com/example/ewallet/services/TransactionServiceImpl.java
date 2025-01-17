@@ -2,7 +2,10 @@ package com.example.ewallet.services;
 
 
 import com.example.ewallet.entities.Transaction;
+import com.example.ewallet.entities.Wallet;
 import com.example.ewallet.repositories.TransactionRepository;
+import com.example.ewallet.repositories.WalletRepository;
+import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,12 +14,26 @@ import java.util.List;
 public class TransactionServiceImpl implements TransactionService{
 
     private final TransactionRepository transactionRepository;
-
-    public TransactionServiceImpl(TransactionRepository transactionRepository){
+    private final WalletRepository walletRepository;
+    public TransactionServiceImpl(TransactionRepository transactionRepository, WalletRepository walletRepository){
         this.transactionRepository = transactionRepository;
+        this.walletRepository = walletRepository;
     }
     @Override
-    public Transaction createTransaction(Transaction transaction){
+    public Transaction createTransaction(Transaction transaction) throws IllegalAccessException {
+        Wallet wallet = walletRepository.findById(transaction.getWallet().getId())
+                .orElseThrow(() -> new IllegalArgumentException("Wallet not found"));
+        if(transaction.getType() == Transaction.TransactionType.CREDIT){
+            wallet.setBalance(wallet.getBalance() + transaction.getAmount());
+        } else if (transaction.getType() == Transaction.TransactionType.DEBIT) {
+            if(wallet.getBalance() < transaction.getAmount()){
+                throw new IllegalAccessException("Insufficient balance");
+            }
+            wallet.setBalance(wallet.getBalance() - transaction.getAmount());
+        }
+        walletRepository.save(wallet);
+
+        transaction.setWallet(wallet);
         return transactionRepository.save(transaction);
     }
     @Override
@@ -30,5 +47,9 @@ public class TransactionServiceImpl implements TransactionService{
     @Override
     public List<Transaction>getTransactionsByWalletIdAndType(Long walletId, Transaction.TransactionType type){
         return transactionRepository.findByWalletIdAndType(walletId, type);
+    }
+    @Override
+    public List<Transaction> getAllTransactions(){
+        return transactionRepository.findAll();
     }
 }

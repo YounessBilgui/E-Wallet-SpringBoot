@@ -30,7 +30,6 @@ public class Account {
     private String phone;
 
     @Column(nullable = false)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     @Column(name = "created_at", updatable = false)

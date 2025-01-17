@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/transaction")
+@RequestMapping("/api/transactions")
 public class TransactionController {
     private final TransactionService transactionService;
 
@@ -18,9 +18,14 @@ public class TransactionController {
     }
 
     @PostMapping
-    public ResponseEntity<Transaction> createTransaction(@RequestBody Transaction transaction){
+    public ResponseEntity<Transaction> createTransaction(@RequestBody Transaction transaction) throws IllegalAccessException {
         Transaction createdTransaction = transactionService.createTransaction(transaction);
         return ResponseEntity.ok(createdTransaction);
+    }
+    @GetMapping
+    public ResponseEntity<List<Transaction>> getAllTransaction(){
+        List<Transaction> transactions = transactionService.getAllTransactions();
+        return ResponseEntity.ok(transactions);
     }
     @GetMapping("/wallet/{walletId}")
     public ResponseEntity<List<Transaction>> getTransactionsByWalletId(@PathVariable Long walletId){

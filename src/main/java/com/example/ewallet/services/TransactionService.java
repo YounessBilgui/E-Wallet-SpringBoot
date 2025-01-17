@@ -5,8 +5,9 @@ import com.example.ewallet.entities.Transaction;
 import java.util.List;
 
 public interface TransactionService {
-    Transaction createTransaction(Transaction transaction);
+    Transaction createTransaction(Transaction transaction) throws IllegalAccessException;
     List<Transaction> getTransactionsByWalletId(Long walletId);
+    List<Transaction> getAllTransactions();
     List<Transaction> getTransactionsByWalletIdAndStatus(Long walletId, Transaction.TransactionStatus status);
     List<Transaction> getTransactionsByWalletIdAndType(Long walletId, Transaction.TransactionType type);
 }
