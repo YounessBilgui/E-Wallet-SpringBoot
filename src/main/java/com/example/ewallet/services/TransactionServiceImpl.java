@@ -8,7 +8,9 @@ import com.example.ewallet.repositories.WalletRepository;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class TransactionServiceImpl implements TransactionService{
@@ -51,5 +53,28 @@ public class TransactionServiceImpl implements TransactionService{
     @Override
     public List<Transaction> getAllTransactions(){
         return transactionRepository.findAll();
+    }
+    @Override
+    public Transaction getTransactionById(Long id){
+
+        return transactionRepository.findById(id).orElse(null);
+    }
+    @Override
+    public void deleteTransactionById(Long id) {
+        Transaction transaction = transactionRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Transaction Not Found"));
+        transactionRepository.delete(transaction);
+    }
+    @Override
+    public Transaction updatedTransaction(Long id, Transaction updatedTransaction){
+        Transaction existingTransaction = transactionRepository.findById(id)
+                .orElseThrow(()->new NoSuchElementException("Transaction not found"));
+
+        existingTransaction.setType(updatedTransaction.getType());
+        existingTransaction.setStatus(updatedTransaction.getStatus());
+        existingTransaction.setAmount(updatedTransaction.getAmount());
+        existingTransaction.setDescription(updatedTransaction.getDescription());
+        existingTransaction.setUpdatedAt(LocalDateTime.now());
+        return transactionRepository.save(existingTransaction);
     }
 }

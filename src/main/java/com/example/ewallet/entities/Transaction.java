@@ -41,7 +41,7 @@ public class Transaction {
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
-
+    private LocalDateTime updatedAt = LocalDateTime.now();
     // CONSTRUCTOR
 
     public enum TransactionType{
