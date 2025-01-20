@@ -1,17 +1,19 @@
 package com.example.ewallet.services;
 
 
+import com.example.ewallet.dto.TransferDTO;
 import com.example.ewallet.entities.Transaction;
 import com.example.ewallet.entities.Wallet;
 import com.example.ewallet.repositories.TransactionRepository;
 import com.example.ewallet.repositories.WalletRepository;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
-
 @Service
 public class TransactionServiceImpl implements TransactionService{
 
@@ -22,20 +24,31 @@ public class TransactionServiceImpl implements TransactionService{
         this.walletRepository = walletRepository;
     }
     @Override
-    public Transaction createTransaction(Transaction transaction) throws IllegalAccessException {
-        Wallet wallet = walletRepository.findById(transaction.getWallet().getId())
-                .orElseThrow(() -> new IllegalArgumentException("Wallet not found"));
-        if(transaction.getType() == Transaction.TransactionType.CREDIT){
-            wallet.setBalance(wallet.getBalance() + transaction.getAmount());
-        } else if (transaction.getType() == Transaction.TransactionType.DEBIT) {
-            if(wallet.getBalance() < transaction.getAmount()){
-                throw new IllegalAccessException("Insufficient balance");
-            }
-            wallet.setBalance(wallet.getBalance() - transaction.getAmount());
+    public Transaction createTransaction(Transaction transaction) {
+        if (transaction.getFromWallet() == null || transaction.getToWallet() == null) {
+            throw new IllegalArgumentException("Wallet information is missing in the transaction.");
         }
-        walletRepository.save(wallet);
 
-        transaction.setWallet(wallet);
+        Wallet fromWallet = walletRepository.findById(transaction.getFromWallet().getId())
+                .orElseThrow(() -> new IllegalArgumentException("FromWallet does not exist"));
+
+        Wallet toWallet = walletRepository.findById(transaction.getToWallet().getId())
+                .orElseThrow(() -> new IllegalArgumentException("ToWallet does not exist"));
+
+        if (fromWallet.getBalance() < transaction.getAmount()) {
+            throw new IllegalArgumentException("Insufficient balance in the sender wallet.");
+        }
+
+        // Update balances
+        fromWallet.setBalance(fromWallet.getBalance() - transaction.getAmount());
+        toWallet.setBalance(toWallet.getBalance() + transaction.getAmount());
+
+        // Save wallets
+        walletRepository.save(fromWallet);
+        walletRepository.save(toWallet);
+
+        // Save transaction
+        transaction.setStatus(Transaction.TransactionStatus.SUCCESS);
         return transactionRepository.save(transaction);
     }
     @Override
@@ -77,4 +90,32 @@ public class TransactionServiceImpl implements TransactionService{
         existingTransaction.setUpdatedAt(LocalDateTime.now());
         return transactionRepository.save(existingTransaction);
     }
+    @Transactional
+    @Override
+    public void transferFunds(TransferDTO transferDTO) {
+        Wallet fromWallet = walletRepository.findById(transferDTO.getFromWallet())
+                .orElseThrow(() -> new IllegalArgumentException("Sender wallet not found."));
+        Wallet toWallet = walletRepository.findById(transferDTO.getToWallet())
+                .orElseThrow(() -> new IllegalArgumentException("Recipient wallet not found."));
+
+        if (fromWallet.getBalance() < transferDTO.getAmount()) {
+            throw new IllegalArgumentException("Insufficient balance in sender's wallet.");
+        }
+
+        // Perform atomic updates
+        fromWallet.setBalance(fromWallet.getBalance() - transferDTO.getAmount());
+        toWallet.setBalance(toWallet.getBalance() + transferDTO.getAmount());
+
+        walletRepository.save(fromWallet);
+        walletRepository.save(toWallet);
+
+        // Log the transaction
+        Transaction transaction = new Transaction();
+        transaction.setFromWallet(fromWallet);
+        transaction.setToWallet(toWallet);
+        transaction.setAmount(transferDTO.getAmount());
+        transaction.setDescription("Funds Transfer");
+        transactionRepository.save(transaction);
+    }
+
 }

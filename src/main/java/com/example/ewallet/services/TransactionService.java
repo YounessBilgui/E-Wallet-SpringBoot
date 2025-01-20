@@ -1,5 +1,6 @@
 package com.example.ewallet.services;
 
+import com.example.ewallet.dto.TransferDTO;
 import com.example.ewallet.entities.Transaction;
 
 import java.util.List;
@@ -13,4 +14,5 @@ public interface TransactionService {
     List<Transaction> getTransactionsByWalletIdAndType(Long walletId, Transaction.TransactionType type);
     void deleteTransactionById(Long id);
     Transaction updatedTransaction(Long id, Transaction updatedTransaction);
+    void transferFunds(TransferDTO transferDTO);
 }

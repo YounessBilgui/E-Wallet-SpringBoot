@@ -1,6 +1,7 @@
 package com.example.ewallet.controller;
 
 
+import com.example.ewallet.dto.TransferDTO;
 import com.example.ewallet.entities.Transaction;
 import com.example.ewallet.services.TransactionService;
 import org.springframework.http.HttpStatus;
@@ -21,9 +22,17 @@ public class TransactionController {
     }
 
     @PostMapping
-    public ResponseEntity<Transaction> createTransaction(@RequestBody Transaction transaction) throws IllegalAccessException {
-        Transaction createdTransaction = transactionService.createTransaction(transaction);
-        return ResponseEntity.ok(createdTransaction);
+    public ResponseEntity<?> createTransaction(@RequestBody Transaction transaction) {
+        if (transaction.getFromWallet() == null || transaction.getToWallet() == null || transaction.getAmount() == null) {
+            return ResponseEntity.badRequest().body("Invalid transaction data. Please provide all required fields.");
+        }
+
+        try {
+            Transaction createdTransaction = transactionService.createTransaction(transaction);
+            return ResponseEntity.ok(createdTransaction);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: " + e.getMessage());
+        }
     }
     @GetMapping
     public ResponseEntity<List<Transaction>> getAllTransaction(){
@@ -67,6 +76,17 @@ public class TransactionController {
         }catch (IllegalArgumentException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(null);
+        }
+    }
+    @PostMapping("/transfer")
+    public ResponseEntity<String> transferFunds(@RequestBody TransferDTO transferDTO) {
+        try {
+            transactionService.transferFunds(transferDTO);
+            return ResponseEntity.ok("Transfer successful!");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred during the transfer.");
         }
     }
 }

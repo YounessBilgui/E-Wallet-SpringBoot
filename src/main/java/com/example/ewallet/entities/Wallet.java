@@ -23,7 +23,7 @@ public class Wallet {
 
    // RELATION SQL IN JPA SPRING BOOT
     @OneToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
     private Account account;
 
     //precision = 15: This defines the total number of digits that can be stored
@@ -37,7 +37,10 @@ public class Wallet {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt = LocalDateTime.now();
 
-
+    @PreUpdate
+    public void setUpdateAt(){
+        this.updatedAt = LocalDateTime.now();
+    }
 
 
 }

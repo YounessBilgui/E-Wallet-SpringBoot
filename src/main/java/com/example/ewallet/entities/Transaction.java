@@ -26,6 +26,16 @@ public class Transaction {
     @JoinColumn(name = "wallet_id", nullable = false)
     private Wallet wallet;
 
+    // SENDER
+    @ManyToOne
+    @JoinColumn(name = "from_wallet_id", nullable = true)
+    private Wallet fromWallet;
+
+    // RECIVER
+    @ManyToOne
+    @JoinColumn(name = "to_wallet_id", nullable = true)
+    private Wallet toWallet;
+
     @Column(nullable = false, length = 50)
     @Enumerated(EnumType.STRING)
     private TransactionType type; // Credit or Debit
