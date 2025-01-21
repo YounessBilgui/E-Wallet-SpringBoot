@@ -1,23 +1,35 @@
 package com.example.ewallet.services;
 
 
+import com.example.ewallet.dto.AccountSummaryDTO;
 import com.example.ewallet.dto.RequestAccount;
 import com.example.ewallet.dto.ResponseAccount;
 import com.example.ewallet.entities.Account;
+import com.example.ewallet.entities.Transaction;
+import com.example.ewallet.entities.Wallet;
 import com.example.ewallet.repositories.AccountRepository;
+import com.example.ewallet.repositories.TransactionRepository;
+import com.example.ewallet.repositories.WalletRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
 public class AccountServiceImpl implements AccountService {
     private final AccountRepository accountRepository;
+    private final WalletRepository walletRepository;
+    private final TransactionRepository transactionRepository;
 
     @Autowired
-    public AccountServiceImpl(AccountRepository accountRepository){
+    public AccountServiceImpl(AccountRepository accountRepository, WalletRepository walletRepository, TransactionRepository transactionRepository){
         this.accountRepository = accountRepository;
+        this.walletRepository = walletRepository;
+        this.transactionRepository = transactionRepository;
     }
 
     @Override
@@ -80,6 +92,17 @@ public class AccountServiceImpl implements AccountService {
             throw new RuntimeException("User not Found With Id : " + id);
         }
 
+    }
+    public AccountSummaryDTO getAccountSummary(Long accountId){
+
+        // we fetch account details
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new EntityNotFoundException("Account not found With id" + accountId));
+        // Fetch wallet associated with the account
+        Wallet wallet = walletRepository.findByAccountId(accountId);
+
+        //Fetch Transaction associated with the account
+        return null;
     }
 
 }

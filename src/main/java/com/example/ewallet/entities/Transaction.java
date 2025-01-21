@@ -31,7 +31,7 @@ public class Transaction {
     @JoinColumn(name = "from_wallet_id", nullable = true)
     private Wallet fromWallet;
 
-    // RECIVER
+    // RECEIVER
     @ManyToOne
     @JoinColumn(name = "to_wallet_id", nullable = true)
     private Wallet toWallet;

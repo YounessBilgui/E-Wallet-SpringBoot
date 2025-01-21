@@ -7,8 +7,6 @@ import com.example.ewallet.entities.Wallet;
 import com.example.ewallet.repositories.TransactionRepository;
 import com.example.ewallet.repositories.WalletRepository;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -117,5 +115,15 @@ public class TransactionServiceImpl implements TransactionService{
         transaction.setDescription("Funds Transfer");
         transactionRepository.save(transaction);
     }
+
+    @Override
+    public List<Object[]> findByAccountId(Long accountId) {
+        List<Object[]> transactions = transactionRepository.findByAccountId(accountId);
+        if (transactions.isEmpty()){
+            throw new IllegalArgumentException("this transaction not associate with that" + accountId);
+        }
+        return transactions;
+    }
+
 
 }

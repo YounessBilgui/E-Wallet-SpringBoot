@@ -4,6 +4,7 @@ package com.example.ewallet.controller;
 import com.example.ewallet.dto.TransferDTO;
 import com.example.ewallet.entities.Transaction;
 import com.example.ewallet.services.TransactionService;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ public class TransactionController {
 
     @PostMapping
     public ResponseEntity<?> createTransaction(@RequestBody Transaction transaction) {
-        if (transaction.getFromWallet() == null || transaction.getToWallet() == null || transaction.getAmount() == null) {
+        if ((transaction.getFromWallet() == null) || (transaction.getToWallet() == null) || (transaction.getAmount() == null)) {
             return ResponseEntity.badRequest().body("Invalid transaction data. Please provide all required fields.");
         }
 
@@ -88,5 +89,10 @@ public class TransactionController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred during the transfer.");
         }
+    }
+    @GetMapping("/account/{accountId}")
+    public ResponseEntity <List<Object[]>> findByAccountId(@PathVariable Long accountId){
+        List<Object[]> transactions = transactionService.findByAccountId(accountId);
+        return ResponseEntity.ok(transactions);
     }
 }
