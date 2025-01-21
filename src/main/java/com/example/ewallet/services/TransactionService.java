@@ -5,6 +5,7 @@ import com.example.ewallet.entities.Transaction;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface TransactionService {
     Transaction createTransaction(Transaction transaction) throws IllegalAccessException;
@@ -16,5 +17,5 @@ public interface TransactionService {
     void deleteTransactionById(Long id);
     Transaction updatedTransaction(Long id, Transaction updatedTransaction);
     void transferFunds(TransferDTO transferDTO);
-    List<Object[]> findByAccountId(Long accountId);
+    Map<String, Object> findByAccountId(Long accountId);
 }

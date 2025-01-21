@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 @RestController
@@ -91,8 +92,8 @@ public class TransactionController {
         }
     }
     @GetMapping("/account/{accountId}")
-    public ResponseEntity <List<Object[]>> findByAccountId(@PathVariable Long accountId){
-        List<Object[]> transactions = transactionService.findByAccountId(accountId);
-        return ResponseEntity.ok(transactions);
+    public ResponseEntity<Map<String, Object>> findByAccountId(@PathVariable Long accountId){
+        Map<String, Object> response = transactionService.findByAccountId(accountId);
+        return ResponseEntity.ok(response);
     }
 }
