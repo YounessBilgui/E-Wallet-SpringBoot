@@ -2,25 +2,28 @@ package com.example.ewallet.services;
 
 
 import com.example.ewallet.dto.TransferDTO;
+import com.example.ewallet.entities.Account;
 import com.example.ewallet.entities.Transaction;
 import com.example.ewallet.entities.Wallet;
+import com.example.ewallet.repositories.AccountRepository;
 import com.example.ewallet.repositories.TransactionRepository;
 import com.example.ewallet.repositories.WalletRepository;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
+
 @Service
+@RequiredArgsConstructor
 public class TransactionServiceImpl implements TransactionService{
 
     private final TransactionRepository transactionRepository;
     private final WalletRepository walletRepository;
-    public TransactionServiceImpl(TransactionRepository transactionRepository, WalletRepository walletRepository){
-        this.transactionRepository = transactionRepository;
-        this.walletRepository = walletRepository;
-    }
+    private final AccountRepository accountRepository;
+
     @Override
     public Transaction createTransaction(Transaction transaction) {
         if (transaction.getFromWallet() == null || transaction.getToWallet() == null) {
@@ -117,12 +120,32 @@ public class TransactionServiceImpl implements TransactionService{
     }
 
     @Override
-    public List<Object[]> findByAccountId(Long accountId) {
+    public Map<String, Object> findByAccountId(Long accountId) {
         List<Object[]> transactions = transactionRepository.findByAccountId(accountId);
-        if (transactions.isEmpty()){
-            throw new IllegalArgumentException("this transaction not associate with that" + accountId);
+        Account account = accountRepository.findById(accountId).orElse(null);
+        Wallet wallet = walletRepository.findByAccountId(accountId);
+
+        Map<String, Object> response = new HashMap<>();
+
+        response.put("accountName", account.getName());
+        response.put("walletId", wallet.getId());
+
+        List<Map<String, Object>> transactionsRes = new ArrayList<>();
+
+        for (Object[] entry : transactions){
+            Map<String, Object> temp = new HashMap<>();
+            temp.put("fromWalletId", entry[0]);
+            temp.put("toWalletId", entry[1]);
+            temp.put("type", entry[2]);
+            temp.put("amount", entry[3]);
+            temp.put("status", entry[4]);
+            temp.put("description", entry[5]);
+            transactionsRes.add(temp);
         }
-        return transactions;
+
+        response.put("transactions", transactionsRes);
+
+        return response;
     }
 
 
