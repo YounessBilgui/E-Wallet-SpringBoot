@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -122,31 +123,47 @@ public class TransactionServiceImpl implements TransactionService{
     @Override
     public Map<String, Object> findByAccountId(Long accountId) {
         List<Object[]> transactions = transactionRepository.findByAccountId(accountId);
-        Account account = accountRepository.findById(accountId).orElse(null);
+        Account account = accountRepository.findById(accountId).orElseThrow(()
+                -> new NoSuchElementException("Account not found"));
         Wallet wallet = walletRepository.findByAccountId(accountId);
+        if (wallet == null) throw new NoSuchElementException("Wallet not found for this account");
+
 
         Map<String, Object> response = new HashMap<>();
-
+        assert account != null;
         response.put("accountName", account.getName());
         response.put("walletId", wallet.getId());
 
-        List<Map<String, Object>> transactionsRes = new ArrayList<>();
-
-        for (Object[] entry : transactions){
-            Map<String, Object> temp = new HashMap<>();
-            temp.put("fromWalletId", entry[0]);
-            temp.put("toWalletId", entry[1]);
-            temp.put("type", entry[2]);
-            temp.put("amount", entry[3]);
-            temp.put("status", entry[4]);
-            temp.put("description", entry[5]);
-            transactionsRes.add(temp);
-        }
+//        List<Map<String, Object>> transactionsRes = new ArrayList<>();
+//        for (Object[] entry : transactions){
+//            Map<String, Object> temp = new HashMap<>();
+//            temp.put("fromWalletId", entry[0]);
+//            temp.put("toWalletId", entry[1]);
+//            temp.put("type", entry[2]);
+//            temp.put("amount", entry[3]);
+//            temp.put("status", entry[4]);
+//            temp.put("description", entry[5]);
+//            transactionsRes.add(temp);
+//        }
+//        response.put("transactions", transactionsRes);
+//        return response;
+//    }
+        List<Map<String, Object>> transactionsRes = transactions.stream()
+                .map(entry -> {
+                    Map<String, Object> temp = new HashMap<>();
+                    temp.put("fromWalletId", entry[0]);
+                    temp.put("toWalletId", entry[1]);
+                    temp.put("type", entry[2]);
+                    temp.put("amount", entry[3]);
+                    temp.put("status", entry[4]);
+                    temp.put("description", entry[5]);
+                    return temp;
+                })
+                .collect(Collectors.toList());
 
         response.put("transactions", transactionsRes);
 
         return response;
     }
-
 
 }

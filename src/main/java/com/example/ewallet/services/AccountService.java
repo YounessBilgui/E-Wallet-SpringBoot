@@ -1,5 +1,6 @@
 package com.example.ewallet.services;
 
+import com.example.ewallet.dto.AccountSummaryDTO;
 import com.example.ewallet.dto.RequestAccount;
 import com.example.ewallet.dto.ResponseAccount;
 import com.example.ewallet.entities.Account;
@@ -15,5 +16,6 @@ public interface AccountService {
     ResponseAccount createUser(RequestAccount requestAccount);
     Account updateUser(Long id, Account account);
     void deleteUser(Long id);
+    AccountSummaryDTO getAccountSummary(Long accountId);
 
 }

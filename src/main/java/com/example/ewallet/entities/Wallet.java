@@ -25,7 +25,6 @@ public class Wallet {
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private Account account;
-
     //precision = 15: This defines the total number of digits that can be stored
     //scale = 2: This specifies how many decimal places are allowed after the decimal point
     @Column(name="balance", nullable = false)

@@ -1,9 +1,7 @@
 package com.example.ewallet.services;
 
 
-import com.example.ewallet.dto.AccountSummaryDTO;
-import com.example.ewallet.dto.RequestAccount;
-import com.example.ewallet.dto.ResponseAccount;
+import com.example.ewallet.dto.*;
 import com.example.ewallet.entities.Account;
 import com.example.ewallet.entities.Transaction;
 import com.example.ewallet.entities.Wallet;
@@ -14,10 +12,9 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -100,9 +97,42 @@ public class AccountServiceImpl implements AccountService {
                 .orElseThrow(() -> new EntityNotFoundException("Account not found With id" + accountId));
         // Fetch wallet associated with the account
         Wallet wallet = walletRepository.findByAccountId(accountId);
-
+        if (wallet == null){
+            throw new NoSuchElementException("Wallet not found for this account");
+        }
         //Fetch Transaction associated with the account
-        return null;
-    }
+        List<Object[]> transactions = transactionRepository.findByAccountId(accountId);
 
+        Map<String, Object> response = new HashMap<>();
+
+        response.put("accountName", account.getName());
+        response.put("email", account.getEmail());
+        response.put("phone", account.getPhone());
+        response.put("walletId", wallet.getId());
+        response.put("walletBalance", wallet.getBalance());
+
+        List<Map<String, Object>> transactionsRes = transactions.stream()
+                .map(entry -> {
+                    Map<String, Object> temp = new HashMap<>();
+                    temp.put("fromWalletId", entry[0]);
+                    temp.put("toWalletId", entry[1]);
+                    temp.put("type", entry[2]);
+                    temp.put("amount", entry[3]);
+                    temp.put("status", entry[4]);
+                    temp.put("description", entry[5]);
+                    return temp;
+                })
+                .collect(Collectors.toList());
+
+        response.put("transactions", transactionsRes);
+
+        return new AccountSummaryDTO(
+                account.getName(),
+                account.getEmail(),
+                account.getPhone(),
+                wallet.getId(),
+                wallet.getBalance(),
+                transactionsRes
+        );
+    }
 }

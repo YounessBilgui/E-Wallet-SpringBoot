@@ -1,6 +1,7 @@
 package com.example.ewallet.controller;
 
 
+import com.example.ewallet.dto.AccountSummaryDTO;
 import com.example.ewallet.dto.RequestAccount;
 import com.example.ewallet.dto.ResponseAccount;
 import com.example.ewallet.entities.Account;
@@ -68,6 +69,10 @@ public class AccountController {
     public ResponseEntity<String> DeleteUser(@PathVariable Long id){
         accountService.deleteUser(id);
         return ResponseEntity.ok("User Deleted Successfully");
+    }
+    @GetMapping("/{id}/summary")
+    public AccountSummaryDTO getAccountSummary(@PathVariable Long id){
+        return accountService.getAccountSummary(id);
     }
 
 }
