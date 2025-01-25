@@ -9,7 +9,6 @@ import com.example.ewallet.repositories.AccountRepository;
 import com.example.ewallet.repositories.TransactionRepository;
 import com.example.ewallet.repositories.WalletRepository;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -75,10 +74,11 @@ public class TransactionServiceImpl implements TransactionService{
         return transactionRepository.findById(id).orElse(null);
     }
     @Override
-    public void deleteTransactionById(Long id) {
+    public Transaction deleteTransactionById(Long id) {
         Transaction transaction = transactionRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Transaction Not Found"));
         transactionRepository.delete(transaction);
+        return transaction;
     }
     @Override
     public Transaction updatedTransaction(Long id, Transaction updatedTransaction){

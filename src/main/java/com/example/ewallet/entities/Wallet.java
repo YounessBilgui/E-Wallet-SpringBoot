@@ -1,6 +1,7 @@
 package com.example.ewallet.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 
@@ -21,10 +22,14 @@ public class Wallet {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
    // RELATION SQL IN JPA SPRING BOOT
-    @OneToOne
+    @JsonBackReference
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private Account account;
+
+
     //precision = 15: This defines the total number of digits that can be stored
     //scale = 2: This specifies how many decimal places are allowed after the decimal point
     @Column(name="balance", nullable = false)

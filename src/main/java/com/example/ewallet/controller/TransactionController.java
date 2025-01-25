@@ -80,6 +80,11 @@ public class TransactionController {
                     .body(null);
         }
     }
+    @DeleteMapping("/{id}")
+    private ResponseEntity<String> deleteTransactionById(@PathVariable Long id){
+        transactionService.deleteTransactionById(id);
+        return ResponseEntity.ok("transaction Deleted Successfully");
+    }
     @PostMapping("/transfer")
     public ResponseEntity<String> transferFunds(@RequestBody TransferDTO transferDTO) {
         try {

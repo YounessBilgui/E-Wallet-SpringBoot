@@ -1,9 +1,13 @@
 package com.example.ewallet.controller;
 
 
+import com.example.ewallet.dto.BalanceSummaryDTO;
 import com.example.ewallet.entities.Wallet;
+import com.example.ewallet.services.AccountService;
 import com.example.ewallet.services.WalletService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,10 +19,12 @@ import java.util.Optional;
 public class WalletController {
 
     private final WalletService walletService;
+    private final AccountService accountService;
 
     @Autowired
-    public WalletController(WalletService walletService){
+    public WalletController(WalletService walletService, AccountService accountService){
         this.walletService = walletService;
+        this.accountService = accountService;
     }
 
     @GetMapping("/{walletId}")
@@ -58,6 +64,16 @@ public class WalletController {
     public ResponseEntity<String> deleteWallet(@PathVariable Long walletId){
         walletService.deleteWallet(walletId);
         return ResponseEntity.ok("Wallet deleted successfully!");
+    }
+    @GetMapping("/balance-summary/{accountId}")
+    public ResponseEntity<?> getBalanceSummary(@RequestParam Long accountId){
+        try {
+            BalanceSummaryDTO summary = walletService.getBalanceSummary(accountId);
+            return ResponseEntity.ok(summary);
+        } catch (EntityNotFoundException | IllegalAccessException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+        }
+
     }
 
 

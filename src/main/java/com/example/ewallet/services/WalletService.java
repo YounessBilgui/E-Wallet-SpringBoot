@@ -1,5 +1,6 @@
 package com.example.ewallet.services;
 
+import com.example.ewallet.dto.BalanceSummaryDTO;
 import com.example.ewallet.entities.Wallet;
 
 import java.util.List;
@@ -13,4 +14,5 @@ public interface WalletService {
     void deleteWallet(Long walletId);
     Wallet getWalletByAccountId(Long userId) throws IllegalAccessException;
 
+    BalanceSummaryDTO getBalanceSummary(Long userId) throws IllegalAccessException;
 }

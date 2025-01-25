@@ -1,10 +1,12 @@
 package com.example.ewallet.services;
 
 
+import com.example.ewallet.dto.BalanceSummaryDTO;
 import com.example.ewallet.entities.Account;
 import com.example.ewallet.entities.Wallet;
 import com.example.ewallet.repositories.AccountRepository;
 import com.example.ewallet.repositories.WalletRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -68,13 +70,23 @@ public class WalletServiceImpl implements WalletService
     }
 
     @Override
-    public Wallet getWalletByAccountId(Long accoundId) throws IllegalAccessException {
-        Wallet wallet = walletRepository.findByAccountId(accoundId);
+    public Wallet getWalletByAccountId(Long accountId) throws IllegalAccessException {
+        Wallet wallet = walletRepository.findByAccountId(accountId);
         if (wallet == null){
-            throw new IllegalAccessException("Wallet not found for account ID" + accoundId);
+            throw new IllegalAccessException("Wallet not found for account ID" + accountId);
         }
         return wallet;
     }
+    @Override
+    public BalanceSummaryDTO getBalanceSummary(Long accountId){
 
+        Wallet wallet = walletRepository.findByAccountId(accountId);
+
+       if(wallet == null){
+           throw  new EntityNotFoundException("wallet not found for accountID" + accountId);
+       }
+
+        return new BalanceSummaryDTO(wallet.getId(), wallet.getBalance());
+    }
 
 }

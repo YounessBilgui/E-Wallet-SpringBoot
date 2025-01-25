@@ -1,11 +1,13 @@
 package com.example.ewallet.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Getter
@@ -27,11 +29,12 @@ public class Account {
     @Column(nullable = false, unique = true, length = 100)
     private String email;
 
-    @OneToOne
+    @JsonManagedReference
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "wallet_id")
     private Wallet wallet;
 
-    @Column(nullable = false, unique = true, length = 15)
+    @Column(nullable = false, unique = true)
     private String phone;
 
     @Column(nullable = false)
@@ -39,6 +42,9 @@ public class Account {
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
+
+//    public void setWallets(List<Wallet> wallets) {
+//    }
 
 
 //    public void setCreatedAt(LocalDateTime createdAt) {
