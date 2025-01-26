@@ -7,10 +7,15 @@ import com.example.ewallet.dto.ResponseAccount;
 import com.example.ewallet.entities.Account;
 import com.example.ewallet.services.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -75,4 +80,14 @@ public class AccountController {
         return accountService.getAccountSummary(id);
     }
 
+    @GetMapping("/paginate")
+    public ResponseEntity<Page<Account>> getAccounts(
+            @RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size,
+            @RequestParam(defaultValue = "id") String sortField, @RequestParam(defaultValue = "asc") String sortDirection
+    ){
+        Page<Account> accounts = accountService.getAccounts(page, size, sortField, sortDirection);
+
+
+        return ResponseEntity.ok(accounts);
+    }
 }

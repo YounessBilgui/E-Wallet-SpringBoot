@@ -3,18 +3,21 @@ package com.example.ewallet.services;
 
 import com.example.ewallet.dto.*;
 import com.example.ewallet.entities.Account;
-import com.example.ewallet.entities.Transaction;
 import com.example.ewallet.entities.Wallet;
 import com.example.ewallet.repositories.AccountRepository;
 import com.example.ewallet.repositories.TransactionRepository;
 import com.example.ewallet.repositories.WalletRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -90,6 +93,7 @@ public class AccountServiceImpl implements AccountService {
         }
 
     }
+    @Override
     public AccountSummaryDTO getAccountSummary(Long accountId){
 
         // we fetch account details
@@ -135,4 +139,14 @@ public class AccountServiceImpl implements AccountService {
                 transactionsRes
         );
     }
+
+    @Override
+    public Page<Account> getAccounts(Integer page, Integer size, String sortField, String sortDirection) {
+
+        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField);
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<Account> accounts = accountRepository.findAll(pageable);
+        return accounts;
+    }
+
 }
