@@ -8,6 +8,10 @@ import com.example.ewallet.repositories.AccountRepository;
 import com.example.ewallet.repositories.WalletRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -87,6 +91,14 @@ public class WalletServiceImpl implements WalletService
        }
 
         return new BalanceSummaryDTO(wallet.getId(), wallet.getBalance());
+    }
+
+    @Override
+    public Page<Wallet> getWallets(Integer page, Integer size, String sortField, String sortDirection) {
+        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField);
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<Wallet> wallets = walletRepository.findAll(pageable);
+        return wallets;
     }
 
 }

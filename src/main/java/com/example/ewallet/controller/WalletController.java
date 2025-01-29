@@ -7,6 +7,7 @@ import com.example.ewallet.services.AccountService;
 import com.example.ewallet.services.WalletService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -74,6 +75,16 @@ public class WalletController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
         }
 
+    }
+    @GetMapping("/paginate")
+    public ResponseEntity<Page<Wallet>> getWallets(
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "10") Integer size,
+            @RequestParam(defaultValue = "id") String sortField,
+            @RequestParam(defaultValue = "asc") String sortDirection
+    ){
+        Page<Wallet> wallets = walletService.getWallets(page,size,sortField,sortDirection);
+        return ResponseEntity.ok(wallets);
     }
 
 
