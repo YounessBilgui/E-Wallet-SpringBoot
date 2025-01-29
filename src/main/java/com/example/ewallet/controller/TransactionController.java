@@ -2,8 +2,10 @@ package com.example.ewallet.controller;
 
 
 import com.example.ewallet.dto.TransferDTO;
+import com.example.ewallet.entities.Account;
 import com.example.ewallet.entities.Transaction;
 import com.example.ewallet.services.TransactionService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -100,5 +102,15 @@ public class TransactionController {
     public ResponseEntity<Map<String, Object>> findByAccountId(@PathVariable Long accountId){
         Map<String, Object> response = transactionService.findByAccountId(accountId);
         return ResponseEntity.ok(response);
+    }
+    @GetMapping("/paginate")
+    public ResponseEntity<Page<Transaction>> getAccounts(
+            @RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size,
+            @RequestParam(defaultValue = "id") String sortField, @RequestParam(defaultValue = "asc") String sortDirection
+    ){
+        Page<Transaction> transactions = transactionService.getTransaction(page, size, sortField, sortDirection);
+
+
+        return ResponseEntity.ok(transactions);
     }
 }

@@ -10,6 +10,10 @@ import com.example.ewallet.repositories.TransactionRepository;
 import com.example.ewallet.repositories.WalletRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -164,6 +168,14 @@ public class TransactionServiceImpl implements TransactionService{
         response.put("transactions", transactionsRes);
 
         return response;
+    }
+
+    @Override
+    public Page<Transaction> getTransaction(Integer page, Integer size, String sortField, String sortDirection) {
+        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField);
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<Transaction> transactions = transactionRepository.findAll(pageable);
+        return transactions;
     }
 
 }

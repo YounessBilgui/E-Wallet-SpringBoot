@@ -2,6 +2,8 @@ package com.example.ewallet.services;
 
 import com.example.ewallet.dto.TransferDTO;
 import com.example.ewallet.entities.Transaction;
+import com.example.ewallet.entities.Wallet;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.Map;
@@ -17,4 +19,5 @@ public interface TransactionService {
     Transaction updatedTransaction(Long id, Transaction updatedTransaction);
     void transferFunds(TransferDTO transferDTO);
     Map<String, Object> findByAccountId(Long accountId);
+    Page<Transaction> getTransaction(Integer page, Integer size, String sortField, String sortDirection);
 }
