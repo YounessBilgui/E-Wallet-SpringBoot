@@ -6,6 +6,7 @@ import com.example.ewallet.dto.RequestAccount;
 import com.example.ewallet.dto.ResponseAccount;
 import com.example.ewallet.entities.Account;
 import com.example.ewallet.services.AccountService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -39,7 +41,7 @@ public class AccountController {
         return ResponseEntity.ok(user);
     }
     @GetMapping("/email/{email}")
-    public ResponseEntity<?> getAccountByEmail(@PathVariable String email){
+    public ResponseEntity<?> getAccountByEmaail(@PathVariable String email){
         try{
             Account account = accountService.findByEmail(email);
             return ResponseEntity.ok(account);
@@ -90,4 +92,12 @@ public class AccountController {
 
         return ResponseEntity.ok(accounts);
     }
+    @GetMapping("/export/csv/{accountId}")
+    public void exportSingleAccountToCSV(@PathVariable Long accountId, HttpServletResponse response) throws IOException {
+        response.setContentType("text/csv");
+        String filename = "account_" + accountId + ".csv";
+        response.setHeader("Content-Disposition", "attachment; filename = " + filename );
+        accountService.exportSingleAccountToCSV(accountId, response.getWriter());
+    }
+
 }

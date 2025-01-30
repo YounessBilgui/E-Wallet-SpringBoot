@@ -1,6 +1,5 @@
 package com.example.ewallet.services;
 
-
 import com.example.ewallet.dto.*;
 import com.example.ewallet.entities.Account;
 import com.example.ewallet.entities.Wallet;
@@ -13,9 +12,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 
+import java.io.PrintWriter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -147,6 +149,20 @@ public class AccountServiceImpl implements AccountService {
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<Account> accounts = accountRepository.findAll(pageable);
         return accounts;
+    }
+    @Override
+    public void exportSingleAccountToCSV(Long accountId, PrintWriter writer) {
+        Optional<Account> accountOpt = accountRepository.findById(accountId);
+        if (accountOpt.isPresent()) {
+            Account account = accountOpt.get();
+            writer.println("ID,Name,Email,Balance"); // CSV header
+            writer.println(account.getId() + "," +
+                    account.getName() + "," +
+                    account.getEmail() + "," +
+                    account.getWallet().getBalance());
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found");
+        }
     }
 
 }

@@ -7,6 +7,7 @@ import com.example.ewallet.entities.Account;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,4 +23,6 @@ public interface AccountService {
 
 
     Page<Account> getAccounts(Integer page, Integer size, String sortField, String sortDirection);
+
+    void exportSingleAccountToCSV(Long accountId, PrintWriter writer);
 }
