@@ -115,13 +115,27 @@ public class TransactionServiceImpl implements TransactionService{
         walletRepository.save(fromWallet);
         walletRepository.save(toWallet);
 
-        // Log the transaction
-        Transaction transaction = new Transaction();
-        transaction.setFromWallet(fromWallet);
-        transaction.setToWallet(toWallet);
-        transaction.setAmount(transferDTO.getAmount());
-        transaction.setDescription("Funds Transfer");
-        transactionRepository.save(transaction);
+        // Log the transaction for the sender (debit)
+        Transaction debitTransaction = new Transaction();
+        debitTransaction.setWallet(fromWallet);
+        debitTransaction.setFromWallet(fromWallet);
+        debitTransaction.setToWallet(toWallet);
+        debitTransaction.setAmount(transferDTO.getAmount());
+        debitTransaction.setType(Transaction.TransactionType.DEBIT);
+        debitTransaction.setStatus(Transaction.TransactionStatus.SUCCESS);
+        debitTransaction.setDescription("Funds Transfer");
+        transactionRepository.save(debitTransaction);
+
+        // Log the transaction for the receiver (credit)
+        Transaction creditTransaction = new Transaction();
+        creditTransaction.setWallet(toWallet);
+        creditTransaction.setFromWallet(fromWallet);
+        creditTransaction.setToWallet(toWallet);
+        creditTransaction.setAmount(transferDTO.getAmount());
+        creditTransaction.setType(Transaction.TransactionType.CREDIT);
+        creditTransaction.setStatus(Transaction.TransactionStatus.SUCCESS);
+        creditTransaction.setDescription("Funds Transfer");
+        transactionRepository.save(creditTransaction);
     }
 
     @Override
